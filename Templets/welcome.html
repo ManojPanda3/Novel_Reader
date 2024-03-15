@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://image.pollinations.ai/prompt/An%20open%20book%20with%20text%20flowing%20out%20of%20it,%20symbolizing%20the%20stories%20coming%20to%20life.,Art%20Logo?nologo=true" type="image/x-icon">
+    <title>Welcome</title>
+    <style>
+        body{
+            background: rgb(82 79 125);
+        }
+        #entry{
+            position: absolute;
+            top:50%;
+            left:50%;
+            transform: translate(-50%,-50%);
+            padding:10%;
+            border:1px solid black;
+            border-radius: 10px;
+            background: rgb(179 72 46);
+        }
+        #entry div{
+            padding:15px;
+        }
+        #entry input{
+            padding:5px;
+            border:1px solid black;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+<body>
+        <div id="entry">
+            <center>
+            <form action="/novel" method="get">
+                <div><p style="font-weight: bold;">User Name : </p><input type="text" name="username" id="username"></div>
+                <div><p style="font-weight: bold;">Novel Name : </p><input type="text" name="novel_name" id="novel_name"></div>
+                    <div><p style="font-weight: bold;">Initial Chapter number :</p> <input type="text" name="chapter_num" id="chapter_num"></div>
+                <div><button type="submit" id="btn" onclick="()=>{document.getElementById('btn').innerHTML=''}" >submit</button></div>
+            </form>
+        </center>
+        </div>
+</body>
+</html>

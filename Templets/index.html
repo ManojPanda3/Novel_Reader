@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main</title>
+  <link rel="icon" href="https://image.pollinations.ai/prompt/An%20open%20book%20with%20text%20flowing%20out%20of%20it,%20symbolizing%20the%20stories%20coming%20to%20life.,Art%20Logo?nologo=true" type="image/x-icon">
+  <link href="https://www.nerdfonts.com/assets/css/webfont.css" rel="stylesheet" >
+  <style>
+  #display {
+    width:90%;
+    }
+  #heading{
+    height: auto;
+    width:100%;
+    position: sticky;
+    top: 0px;
+    background: rgb(102 ,66 ,157);
+    padding:1%;
+    display: flex;
+    justify-content: space-between;
+    color:white;
+    }
+  #dontsee{
+    position:fixed;
+    top:-100px;
+    left:-100px;
+  }
+  .loader{
+    
+    border: 5px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 5px solid #3498db;
+    width: 50px;
+    height: 50px;
+    animation: spin 1.5s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+  #coc{
+    border: none;
+    background: none;
+    padding: 0px;
+    margin:0px;
+    height:80%;
+  }
+  #heading-right{
+    padding:0px;
+    margin: 0px;
+  }
+  #mode_icon{
+    width:10px;
+    height:10px;
+  }
+  #heading-left button{
+    border : none;
+    background: none;
+    padding : 0px;
+    margin: 0px;
+  }
+</style>
+<style>
+  #heading {
+  opacity: 0.8;
+  transition: opacity 0.6s ease;
+}
+  #heading:hover {
+  opacity:1;
+}
+  #heading:not(:hover) {
+    transition-delay: 1.5s; /* Delay before reverting to original opacity */
+}
+#banner{
+  display:flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  font-size: x-large;
+  font-weight:bold;
+  background-color: #3498db;
+  color:#fff;
+}
+</style>
+
+</head>
+<body id="main">
+  <div id="banner"><p>Reading Novel</p></div>
+  <!-- The banner on top -->
+  <div id = 'heading' >
+    <div id='heading-left'>
+      <button id="prev">⏪</button>
+      <i id="chapter_name_shower"></i> : <b id="chnu"></b>
+      <button id="next">⏩</button>
+    </div>
+  
+    <div id="heading-right">
+      <button type='button' id="coc" >
+        <i class="nf nf-weather-moon_waning_crescent_3" style="color:white;" id="mode_icon"></i>
+      </button>
+    </div>
+  </div>
+
+  
+  <div id="dontsee">
+  <i id="novel">{{novel}}</i>
+  <i id="initial_chapter">{{chapter}}</i>
+  <i id="username">{{username}}</i>
+</div>
+
+  <!-- The Displayed conent  -->
+  <center>
+    <div id="display" style="margin-top: 65px;">
+      <div class="loader"></div>
+    </div>
+  </center>
+
+
+
+  <!-- Script for dark and day mode -->
+  <script>
+    let state = 'White'  // negative of the state of the page
+    let coc = document.getElementById('coc');    // coc -> color of contents
+    let body = document.getElementById('main')  // body -> the whole body
+    coc.addEventListener('click',()=>{
+    if(state == 'White'){
+      body.style.color = 'white';
+      body.style.background = '#0c0c0c';
+      coc.innerHTML='<i id="mode_icon" class="nf nf-md-white_balance_sunny" style="color:yellow;"></i>'
+      state = 'Black'
+    }else{
+      body.style.color = '#0c0c0c';
+      body.style.background = 'white';
+      coc.innerHTML='<i id="mode_icon" class="nf nf-weather-moon_waning_crescent_3" style="color:white;"></i>'
+      state = 'White'
+        };
+      console.log(state)})
+  </script>
+
+
+ <!-- main script to request the data from server -->
+ <script>
+// extracting data from the server -> tag -> here
+let novelname = document.getElementById('novel').textContent
+let chapter_number = document.getElementById('initial_chapter').textContent
+let username = document.getElementById('username').textContent
+
+let next = document.getElementById('next') // next button
+let prev = document.getElementById('prev') // previous chapter button
+let chshower = document.getElementById('chnu') // chsshower -> chapter shower is the text in mid of them
+let display = document.getElementById('display'); // a div where all content was gonna be shown
+document.getElementById('chapter_name_shower').innerHTML = novelname // Novel Name shower
+
+let novel_cahce = {} //  cache of the chapter stored here for easy loading
+  
+let loading = `<div class="loader"></div>`  // a loading dic which is added to screen when the data is pulling
+
+// A function to cache the chapter for fast load
+function cache(data,chapter){
+  names = Object.keys(novel_cahce)  // all the cached chapter
+  max_chapter = 10  // how much max chapter can be stored after which system start to remove far one
+
+  if(!(chapter in novel_cahce)){
+    novel_cahce[chapter] = data // caching data
+    console.log('cached' , chapter)
+  };
+  // delate the cache
+  if(names.length >= max_chapter){
+    // an algorith to find the max distanced novel then it del that
+    distance = {}  // where all the distance will be stored
+    let last_num = '' // the chapter which to be removed 
+
+    // finding the distance
+    for(i in novel_cahce){
+      distance[i]= eval('('+chapter + '-' +i+')**2')
+    };
+    dis = Object.values(distance); 
+    dis.sort(function(a, b) {
+      return a - b;
+    }); // sorting out the distance
+    for(i in distance){if(distance[i]==dis[dis.length-1]){last_num=i;};}; // finding the la
+    console.log('delete -> ',last_num)
+    delete novel_cahce[last_num]  // delate the cahce
+  };
+};
+
+  // a function to send a post request and retreve the data
+  let send = (novelname,chapter) =>{
+    chshower.innerHTML = chapter;  // change the chapter shower
+    let option = {
+      method:"POST",
+      headers : {'Content-type':'application/json'},
+      body : JSON.stringify({chapter_num:chapter,user_name:username}),
+    }
+    fetch(`/${novelname}/scrape`,option)
+    .then((response)=> response.text())
+    .then((data)=>{
+      cache(data,chapter);
+      if(chapter_number == chapter){
+        display.innerHTML=data ;
+      };
+    })
+  }
+  // a function to pull the data from cache memory and if not then use send()to pull it and show
+  function cahce_manager(novel,chapter){
+    names = Object.keys(novel_cahce)  // all the cached chapters of currently reading
+
+    // checking wether the chapter is cached or not and also is the user also want to see the chapter 
+    if(chapter in novel_cahce && chapter_number == chapter){
+      chshower.innerHTML = chapter;
+      display.innerHTML=novel_cahce[chapter] ;
+      console.log('Cached chapter Loading')
+    }else if( chapter_number == chapter){
+        send(novelname,chapter)
+    }else{return 0};
+  };
+
+  cahce_manager(novelname,chapter_number) // initial rendering
+  // Next button
+  next.addEventListener('click',()=>{
+      chapter_number = eval(chapter_number+'+ 1').toString();
+      display.innerHTML = loading;
+      cahce_manager(novelname,chapter_number);
+  });
+
+    // Previous button
+    prev.addEventListener('click',()=>{
+        chapter_number =  eval(chapter_number+'- 1').toString();
+        display.innerHTML = loading;
+        cahce_manager(novelname,chapter_number);
+  });
+ </script>
+
+ <!-- Boot strap  -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
