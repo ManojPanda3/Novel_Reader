@@ -16,7 +16,7 @@
     height: auto;
     width:100%;
     position: sticky;
-    top: 0px;
+    top: -1px;
     background: rgb(102 ,66 ,157);
     padding:1%;
     display: flex;
@@ -84,16 +84,46 @@
   background-color: #3498db;
   color:#fff;
 }
+.before_floadting_Menu{
+  height:0px;
+  width:0px;
+  padding:0px;
+  margin: 0px;
+}
+.floating_Menu{
+  position:fixed;
+  top:100px;
+  background: white;
+  border: 1.5px solid black;
+  background: white;
+}
+
+.upper{
+  display:flex;
+  justify-content: space-between;
+  border:1px solid black;
+}
+.input_menu{
+  align-items: center;
+  text-align: center;
+}
+#close_menu{
+  height:10px;
+  width:10px;
+}
+.mm{
+  content: "\f00d";
+}
 </style>
 
 </head>
 <body id="main">
-  <div id="banner"><p>Reading Novel</p></div>
+  <div id="banner"><a href="/" style="color:white;text-decoration:none;">Reading Novel</a></div>
   <!-- The banner on top -->
   <div id = 'heading' >
     <div id='heading-left'>
       <button id="prev">⏪</button>
-      <i id="chapter_name_shower"></i> : <b id="chnu"></b>
+      <i id="chapter_name_shower"></i> : <i id='chapter_menu'><b id="chnu"></b></i>
       <button id="next">⏩</button>
     </div>
   
@@ -103,7 +133,7 @@
       </button>
     </div>
   </div>
-
+<div id="show" class="before_floadting_Menu"></div>
   
   <div id="dontsee">
   <i id="novel">{{novel}}</i>
@@ -161,7 +191,7 @@ let loading = `<div class="loader"></div>`  // a loading dic which is added to s
 // A function to cache the chapter for fast load
 function cache(data,chapter){
   names = Object.keys(novel_cahce)  // all the cached chapter
-  max_chapter = 10  // how much max chapter can be stored after which system start to remove far one
+  max_chapter = 5  // how much max chapter can be stored after which system start to remove far one
 
   if(!(chapter in novel_cahce)){
     novel_cahce[chapter] = data // caching data
@@ -233,7 +263,38 @@ function cache(data,chapter){
         cahce_manager(novelname,chapter_number);
   });
  </script>
+ <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
+ <script>
+  // The main menu
+  let chapter_menu = `<div class='input_menu'>
+    <form action="/novel" method="get">
+                <div><p style="font-weight: bold;">Novel Name : </p><input type="text" name="novel_name" id="novel_name_menu"></div>
+                    <div><p style="font-weight: bold;">Initial Chapter number :</p> <input type="text" name="chapter_num" id="chapter_num_menu"></div>
+                <div><button type="submit" id="btn" onclick="()=>{document.getElementById('btn').innerHTML=''}" >submit</button></div>
+            </form>
+            </div>`
+  menus = document.getElementById('chapter_menu');
+  menus.addEventListener('click',()=>{
+    newdiv = document.createElement('div')
+    newdiv.classList.add('upper')
+    newdiv.innerHTML = '<p>hi</p>'
+    rm_button = document.createElement('button')
+    rm_button.id = 'close_menu'
+    rm_button.innerHTML = '<i class="nf nf-fa-close"></i>'
+    newdiv.appendChild(rm_button);
+    document.getElementById("show").classList.remove('before_floadting_Menu')
+    document.getElementById('show').appendChild(newdiv);
+    document.getElementById('show').innerHTML = document.getElementById('show').innerHTML + chapter_menu;
+    document.getElementById("show").classList.add('floating_Menu')
+    document.getElementById('close_menu').addEventListener('click',()=>{
+      document.getElementById('show').innerHTML = ''
+      document.getElementById("show").classList.remove('floadting_Menu')
+      document.getElementById("show").classList.add('before_floating_Menu')
+      console.log('hmm')
+    })
+  });
 
+</script>
  <!-- Boot strap  -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

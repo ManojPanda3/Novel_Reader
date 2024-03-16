@@ -35,7 +35,6 @@ def cache(url,novel,chapter):
         else:
             name = novel  
             url = url+f'{novel}/' #changing the url since it usesa different 1
-            print(url)
             return datas(url,name,1)
     
 # A function to clean the cache memory if the total time passed is greter then 30 min
@@ -46,10 +45,9 @@ def cleaner():
     if(now-start[0]>=limit):
         novel_cache = {}
         start[0] = now
-        print('clear')
+
 # The Function to pulling data
 def datas(url,name,mode=0):
-    print(url)
     scraper = cloudscraper.create_scraper(
             interpreter="nodejs",
             delay=10,
@@ -73,6 +71,7 @@ def datas(url,name,mode=0):
         para1 = '<h1 style="padding:10px;">'+para.pop(0).text.strip() + '</h1>' 
         para = "</p><p style='font-weight:bold;font-style: italic;'>".join([p.text.strip() for p in para]) 
         requested_data =  para1 + para  
+        requested_data = "".join(requested_data.split("L1tLagoon witnessed the first publication of this chapter on N0vel-B1n."))
         novel_cache[name] = requested_data  # store the data in cache memo  
 
         cleaner()  # excecuding clean function which clean memo 
@@ -143,4 +142,6 @@ def scrap(novel_name):
 # The App
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0',port=5000)
+    # app.run(debug=False)
+    
 
