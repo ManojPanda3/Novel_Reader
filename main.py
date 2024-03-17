@@ -81,7 +81,7 @@ def datas(url,name,mode=0):
     elif(mode!=0 and html !=None):
         description = '<div><b>Description</b><p><i>'+soup.find('div',class_='desc-text').text.strip()+'</i></p></div>'
         image = '<div><img src='+soup.find('div',class_='book').find('img')['src']+'></div>'
-        requested_data =  image +'<div><h2>'+{name}+'</h2></div>'+description
+        requested_data =  image +'<div><h2>'+name+'</h2></div>'+description
         novel_cache[name] = requested_data    
         cleaner()
         return requested_data
