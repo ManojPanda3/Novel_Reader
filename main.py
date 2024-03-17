@@ -96,7 +96,7 @@ def datas(url,name,mode=0):
         return f'Error {data.status_code}'
 
 # the main app
-app = Flask(__name__, template_folder='/code/Codes/projects/flask/Templets/')
+app = Flask(__name__, template_folder='Templets/')
 
 # entery of the app
 @app.route('/')
@@ -141,7 +141,7 @@ def scrap(novel_name):
 
 # The App
 if __name__ == "__main__":
-    app.run(debug=True,host='0.0.0.0',port=5000)
-    # app.run(debug=False)
+    # app.run(debug=True,host='0.0.0.0',port=5000)
+    app.run(debug=False)
     
 
